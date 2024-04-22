@@ -93,6 +93,20 @@ public class Race
                 TimeUnit.MILLISECONDS.sleep(100);
             }catch(Exception e){}
         }
+
+        // Print the winenr
+        if (raceWonBy(lane1Horse))
+        {
+            System.out.println("And the winner is " + lane1Horse.getName());
+        }
+        else if (raceWonBy(lane2Horse))
+        {
+            System.out.println("And the winner is " + lane2Horse.getName());
+        }
+        else if (raceWonBy(lane3Horse))
+        {
+            System.out.println("And the winner is " + lane3Horse.getName());
+        }
     }
     
     /**
