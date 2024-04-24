@@ -52,7 +52,7 @@ public class Race
         }
         else
         {
-            System.out.println("Cannot add horse to lane " + laneNumber + " because there is no such lane");
+            throw new IllegalArgumentException("Invalid lane number: " + laneNumber);
         }
     }
     
@@ -64,6 +64,12 @@ public class Race
      */
     public void startRace()
     {
+        //Check if race is empty
+        if (lane1Horse == null || lane2Horse == null || lane3Horse == null)
+        {
+            throw new IllegalStateException("Cannot start race: Some lanes are empty.");
+        }
+        
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
         

@@ -11,7 +11,7 @@ public class Main {
         // Add the horses 
         myRace.addHorse(horse1, 1);
         myRace.addHorse(horse2, 2);
-        myRace.addHorse(horse3, 3);
+       
 
         // Start the race
         myRace.startRace();
