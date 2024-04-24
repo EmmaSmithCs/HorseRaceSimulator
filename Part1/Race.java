@@ -69,7 +69,7 @@ public class Race
         {
             throw new IllegalStateException("Cannot start race: Some lanes are empty.");
         }
-        
+
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
         
@@ -77,6 +77,9 @@ public class Race
         lane1Horse.goBackToStart();
         lane2Horse.goBackToStart();
         lane3Horse.goBackToStart();
+
+        //Get the start time of the race
+        long startTime = System.currentTimeMillis();
                       
         while (!finished)
         {
@@ -91,6 +94,13 @@ public class Race
             //if any of the three horses has won the race is finished
             if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
             {
+                finished = true;
+            }
+
+            //Check if the race has lasted too long
+            if (System.currentTimeMillis() - startTime > 10000)
+            {
+                System.out.println("Race has lasted too long, race haulted");
                 finished = true;
             }
            
