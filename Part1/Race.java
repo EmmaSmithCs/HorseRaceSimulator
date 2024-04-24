@@ -97,8 +97,15 @@ public class Race
                 finished = true;
             }
 
+            //End the race if all horses have fallen
+            if (lane1Horse.hasFallen() && lane2Horse.hasFallen() && lane3Horse.hasFallen())
+            {
+                System.out.println("All horses have fallen");
+                finished = true;
+            }
+
             //Check if the race has lasted too long
-            if (System.currentTimeMillis() - startTime > 10000)
+            if (System.currentTimeMillis() - startTime > (raceLength*1000))
             {
                 System.out.println("Race has lasted too long, race haulted");
                 finished = true;
