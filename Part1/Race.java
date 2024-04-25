@@ -70,6 +70,27 @@ public class Race
             throw new IllegalStateException("Cannot start race: Some lanes are empty.");
         }
 
+        //Checks whether the race length is valid (greater than 0)
+        if (raceLength <= 0)
+        {
+            throw new IllegalStateException("Race length cannot be less than or equal to 0.");
+        }
+
+        //Checks that each horse's confidence is between 0 and 1 (exclusive) and that if it is 1 or bigger it sets it 0.99 and if it 0 or less it sets it 0.01
+        if (lane1Horse.getConfidence() >= 1 || lane1Horse.getConfidence() <= 0)
+        {
+            lane1Horse.setConfidence(lane1Horse.getConfidence() >= 1 ? 0.99 : 0.01);
+        }
+        if (lane2Horse.getConfidence() >= 1 || lane2Horse.getConfidence() <= 0)
+        {
+            lane2Horse.setConfidence(lane2Horse.getConfidence() >= 1 ? 0.99 : 0.01);
+        }
+        if (lane3Horse.getConfidence() >= 1 || lane3Horse.getConfidence() <= 0)
+        {
+            lane3Horse.setConfidence(lane3Horse.getConfidence() >= 1 ? 0.99 : 0.01);
+        }
+
+
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
         
