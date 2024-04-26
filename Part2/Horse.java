@@ -78,6 +78,18 @@ public class Horse
     public String getMane() {
         return mane;
     }
+
+    public double getAverageSpeed() {
+        return averageSpeed;
+    }
+
+    public int getRacesRan() {
+        return racesRan;
+    }
+
+    public int getRacesWon() {
+        return racesWon;
+    }
     
     public void goBackToStart()
     {
@@ -112,5 +124,17 @@ public class Horse
     public void setMane(String newMane)
     {
         this.mane = newMane;
+    }
+
+    public void setAverageSpeed(double newAverageSpeed) {
+        this.averageSpeed = newAverageSpeed;
+    }
+
+    public void setRacesRan(int newRacesRan) {
+        this.racesRan = newRacesRan;
+    }
+
+    public void setRacesWon(int newRacesWon) {
+        this.racesWon = newRacesWon;
     }
 }

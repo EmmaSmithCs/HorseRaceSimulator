@@ -1,18 +1,54 @@
-One
+H1
 0.5
 0
 White
 White
+0.0
+0
+0
 
-Two
+H2
 0.5
 0
 Light Brown
 Light Brown
+0.0
+0
+0
 
-Three
+H3
 0.5
 0
 Dark Brown
 Dark Brown
+0.0
+0
+0
+
+H4
+0.5
+0
+Black
+Black
+0.0
+0
+0
+
+H5
+0.5
+0
+White
+Light Brown
+0.0
+0
+0
+
+H6
+0.5
+0
+Light Brown
+Dark Brown
+0.0
+0
+0
 

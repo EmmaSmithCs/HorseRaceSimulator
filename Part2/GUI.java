@@ -59,7 +59,7 @@ public class GUI {
         JButton tracksButton = new JButton("Tracks");
         JButton horsesButton = new JButton("Horses");
         JButton betsButton = new JButton("Bets");
-        JButton stats = new JButton("Stats");
+        JButton statsButton = new JButton("Stats");
         JLabel currentBet = new JLabel("Current Bet: None");
         currentBet.setFont(new Font("Arial", Font.PLAIN, 30));
         JLabel currentBetLabel = new JLabel("Current Bet: None");
@@ -74,27 +74,22 @@ public class GUI {
         tracksButton.setBackground(Color.PINK);
         horsesButton.setBackground(Color.PINK);
         betsButton.setBackground(Color.PINK);
-        currentBet.setBackground(Color.PINK);
         startRace.setBackground(Color.PINK);
-        stats.setBackground(Color.PINK);
+        statsButton.setBackground(Color.PINK);
         tracksButton.setFont(new Font("Arial", Font.PLAIN, 30));
         horsesButton.setFont(new Font("Arial", Font.PLAIN, 30));
         betsButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        currentBetLabel.setFont(new Font("Arial", Font.PLAIN, 30));
-        currentHorseLabel.setFont(new Font("Arial", Font.PLAIN, 30));
         startRace.setFont(new Font("Arial", Font.PLAIN, 30));
-        stats.setFont(new Font("Arial", Font.PLAIN, 30));
+        statsButton.setFont(new Font("Arial", Font.PLAIN, 30));
 
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setPreferredSize(new Dimension(432, buttonsPanel.getHeight()));
-        buttonsPanel.setLayout(new GridLayout(7, 1, 0, 10));
+        buttonsPanel.setLayout(new GridLayout(5, 1, 0, 10));
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add empty border around buttonsPanel
         buttonsPanel.add(tracksButton);
         buttonsPanel.add(horsesButton);
         buttonsPanel.add(betsButton);
-        buttonsPanel.add(stats);
-        buttonsPanel.add(currentBetLabel);
-        buttonsPanel.add(currentHorseLabel);
+        buttonsPanel.add(statsButton);
         buttonsPanel.add(startRace);
         
 
@@ -466,6 +461,9 @@ public class GUI {
                         writer.write(newHorse.getDistanceTravelled() + "\n");
                         writer.write(newHorse.getColour() + "\n");
                         writer.write(newHorse.getMane() + "\n");
+                        writer.write(newHorse.getAverageSpeed() + "\n");
+                        writer.write(newHorse.getRacesRan() + "\n");
+                        writer.write(newHorse.getRacesWon() + "\n");
                         writer.write("\n");
                         
                         nameHorseField.setText("");
@@ -538,9 +536,12 @@ public class GUI {
                 String horseDistance = scanner.nextLine();
                 String horseColour = scanner.nextLine();
                 String horseMane = scanner.nextLine();
+                double horseAverageSpeed = Double.parseDouble(scanner.nextLine());
+                double horseRacesRan = Double.parseDouble(scanner.nextLine());
+                double horseRacesWon = Double.parseDouble(scanner.nextLine());
                 scanner.nextLine(); // Skip the blank line
 
-                JButton horseButton = new JButton("<html><font size='6'>" + horseName + "</font><br><font size='4'>Confidence: " + horseConfidence + "</font><br><font size='4'>Distance: " + horseDistance + "</font><br><font size='4'>Colour: " + horseColour + "</font><br><font size='4'>Mane: " + horseMane + "</font></html>");
+                JButton horseButton = new JButton("<html><font size='6'>" + horseName + "</font><br><font size='4'>Confidence: " + horseConfidence + "</font><br><font size='4'>Distance: " + horseDistance + "</font><br><font size='4'>Colour: " + horseColour + "</font><br><font size='4'>Mane: " + horseMane + "</font><br><font size='4'>Average Speed: " + horseAverageSpeed + "</font><br><font size='4'>Races Ran: " + horseRacesRan + "</font><br><font size='4'>Races Won: " + horseRacesWon + "</font></html>");
                 horseButton.setFont(new Font("Arial", Font.PLAIN, 30));
                 horseButton.setBackground(Color.WHITE); // Set the background color to white
                 horseButton.addActionListener(new ActionListener() {
@@ -565,52 +566,56 @@ public class GUI {
 
 
         // Create a button to reload the created horses
-        JButton relaodHorseButton = new JButton("Reload Horses");
-        relaodHorseButton.setFont(new Font("Arial", Font.PLAIN, 20));
-        relaodHorseButton.setBackground(Color.PINK);
-        relaodHorseButton.addActionListener(new ActionListener() {
+        JButton reloadHorseButton = new JButton("Reload Horses");
+        reloadHorseButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        reloadHorseButton.setBackground(Color.PINK);
+        reloadHorseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 horsesListPanel.removeAll(); // Remove all existing track buttons
-                try {
-                    File file = new File("storedHorses.txt");
-                    Scanner scanner = new Scanner(file);
-                    while (scanner.hasNextLine()) {
-                        String horseName = scanner.nextLine();
-                        String horseConfidence = scanner.nextLine();
-                        String horseDistance = scanner.nextLine();
-                        String horseColour = scanner.nextLine();
-                        String horseMane = scanner.nextLine();
-                        scanner.nextLine(); // Skip the blank line
-        
-                        JButton horseButton = new JButton("<html><font size='6'>" + horseName + "</font><br><font size='4'>Confidence: " + horseConfidence + "</font><br><font size='4'>Distance: " + horseDistance + "</font><br><font size='4'>Colour: " + horseColour + "</font><br><font size='4'>Mane: " + horseMane + "</font></html>");
-                        horseButton.setFont(new Font("Arial", Font.PLAIN, 30));
-                        horseButton.setBackground(Color.WHITE); // Set the background color to white
-                        horseButton.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                // Set the background color of the clicked button to pink
-                                JButton clickedButton = (JButton) e.getSource();
-                                Component[] buttons = horsesListPanel.getComponents();
-                                for (Component button : buttons) {
-                                    button.setBackground(Color.WHITE);
-                                }
-                                clickedButton.setBackground(Color.PINK);
-        
-        
+                // Read the created horses from the file
+            try {
+                File file = new File("storedHorses.txt");
+                Scanner scanner = new Scanner(file);
+                while (scanner.hasNextLine()) {
+                    String horseName = scanner.nextLine();
+                    String horseConfidence = scanner.nextLine();
+                    String horseDistance = scanner.nextLine();
+                    String horseColour = scanner.nextLine();
+                    String horseMane = scanner.nextLine();
+                    double horseAverageSpeed = Double.parseDouble(scanner.nextLine());
+                    double horseRacesRan = Double.parseDouble(scanner.nextLine());
+                    double horseRacesWon = Double.parseDouble(scanner.nextLine());
+                    scanner.nextLine(); // Skip the blank line
+
+                    JButton horseButton = new JButton("<html><font size='6'>" + horseName + "</font><br><font size='4'>Confidence: " + horseConfidence + "</font><br><font size='4'>Distance: " + horseDistance + "</font><br><font size='4'>Colour: " + horseColour + "</font><br><font size='4'>Mane: " + horseMane + "</font><br><font size='4'>Average Speed: " + horseAverageSpeed + "</font><br><font size='4'>Races Ran: " + horseRacesRan + "</font><br><font size='4'>Races Won: " + horseRacesWon + "</font></html>");
+                    horseButton.setFont(new Font("Arial", Font.PLAIN, 30));
+                    horseButton.setBackground(Color.WHITE); // Set the background color to white
+                    horseButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            // Set the background color of the clicked button to pink
+                            JButton clickedButton = (JButton) e.getSource();
+                            Component[] buttons = horsesListPanel.getComponents();
+                            for (Component button : buttons) {
+                                button.setBackground(Color.WHITE);
                             }
-                        });
-                        horsesListPanel.add(horseButton);
-                    }
-                    scanner.close();
-                } catch (FileNotFoundException ex) {
-                    ex.printStackTrace();
+                            clickedButton.setBackground(Color.PINK);
+
+
+                        }
+                    });
+                    horsesListPanel.add(horseButton);
                 }
+                scanner.close();
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
         
                 horsesListPanel.revalidate(); // Revalidate the panel to update the changes
                 horsesListPanel.repaint(); // Repaint the panel to reflect the changes
             }
         });
-        createdHorsesPanel.add(relaodHorseButton, BorderLayout.SOUTH);
+        createdHorsesPanel.add(reloadHorseButton, BorderLayout.SOUTH);
 
 
         // Add the scroll pane to the created horses panel
@@ -814,7 +819,259 @@ public class GUI {
 
         contentPanel.add(betsPanel, "bets"); // Add the bets panel to the content panel with the name "bets"
 
-        // Add action listeners to the buttons
+
+        // Create the stats panel
+       
+        JPanel statsPanel = new JPanel();
+        statsPanel.setLayout(new BorderLayout());
+
+        // Create a panel for the left section (added horses)
+        JPanel addedHorsesStatsPanel = new JPanel();
+        addedHorsesStatsPanel.setLayout(new BorderLayout());
+        addedHorsesStatsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        addedHorsesStatsPanel.setPreferredSize(new Dimension(700, 400));
+
+        // Create a label for the added horses
+        JLabel addedHorsesLabel = new JLabel("Horse Stats");
+        addedHorsesLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        addedHorsesLabel.setHorizontalAlignment(JLabel.CENTER);
+        addedHorsesLabel.setBackground(Color.PINK);
+        addedHorsesLabel.setOpaque(true);
+        addedHorsesStatsPanel.add(addedHorsesLabel, BorderLayout.NORTH);
+
+        // Create a panel to hold the created horses
+        JPanel horsesStatsListPanel = new JPanel();
+        horsesStatsListPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        horsesStatsListPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Create a scroll pane for the horses list panel
+        JScrollPane horsesStatsScrollPane = new JScrollPane(horsesStatsListPanel);
+        horsesStatsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        // Read the created horses from the file
+        try {
+            File file = new File("storedHorses.txt");
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String horseName = scanner.nextLine();
+                String horseConfidence = scanner.nextLine();
+                String horseDistance = scanner.nextLine();
+                String horseColour = scanner.nextLine();
+                String horseMane = scanner.nextLine();
+                double horseAverageSpeed = Double.parseDouble(scanner.nextLine());
+                double horseRacesRan = Double.parseDouble(scanner.nextLine());
+                double horseRacesWon = Double.parseDouble(scanner.nextLine());
+                scanner.nextLine(); // Skip the blank line
+
+                JButton horseButton = new JButton("<html><font size='6'>" + horseName + "</font><br><font size='4'>Confidence: " + horseConfidence + "</font><br><font size='4'>Distance: " + horseDistance + "</font><br><font size='4'>Colour: " + horseColour + "</font><br><font size='4'>Mane: " + horseMane + "</font><br><font size='4'>Average Speed: " + horseAverageSpeed + "</font><br><font size='4'>Races Ran: " + horseRacesRan + "</font><br><font size='4'>Races Won: " + horseRacesWon + "</font></html>");
+                horseButton.setFont(new Font("Arial", Font.PLAIN, 30));
+                horseButton.setBackground(Color.WHITE); // Set the background color to white
+                horseButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        // Set the background color of the clicked button to pink
+                        JButton clickedButton = (JButton) e.getSource();
+                        Component[] buttons = horsesStatsListPanel.getComponents();
+                        for (Component button : buttons) {
+                            button.setBackground(Color.WHITE);
+                        }
+                        clickedButton.setBackground(Color.PINK);
+
+
+                    }
+                });
+                horsesStatsListPanel.add(horseButton);
+            }
+            scanner.close();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+
+        // Create a button to reload the created horses
+        JButton reloadHorseStatsButton = new JButton("Reload Horses");
+        reloadHorseStatsButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        reloadHorseStatsButton.setBackground(Color.PINK);
+        reloadHorseStatsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                horsesStatsListPanel.removeAll(); // Remove all existing track buttons
+                // Read the created horses from the file
+            try {
+                File file = new File("storedHorses.txt");
+                Scanner scanner = new Scanner(file);
+                while (scanner.hasNextLine()) {
+                    String horseName = scanner.nextLine();
+                    String horseConfidence = scanner.nextLine();
+                    String horseDistance = scanner.nextLine();
+                    String horseColour = scanner.nextLine();
+                    String horseMane = scanner.nextLine();
+                    double horseAverageSpeed = Double.parseDouble(scanner.nextLine());
+                    double horseRacesRan = Double.parseDouble(scanner.nextLine());
+                    double horseRacesWon = Double.parseDouble(scanner.nextLine());
+                    scanner.nextLine(); // Skip the blank line
+
+                    JButton horseStatsButton = new JButton("<html><font size='6'>" + horseName + "</font><br><font size='4'>Confidence: " + horseConfidence + "</font><br><font size='4'>Distance: " + horseDistance + "</font><br><font size='4'>Colour: " + horseColour + "</font><br><font size='4'>Mane: " + horseMane + "</font><br><font size='4'>Average Speed: " + horseAverageSpeed + "</font><br><font size='4'>Races Ran: " + horseRacesRan + "</font><br><font size='4'>Races Won: " + horseRacesWon + "</font></html>");
+                    horseStatsButton.setFont(new Font("Arial", Font.PLAIN, 30));
+                    horseStatsButton.setBackground(Color.WHITE); // Set the background color to white
+                    horseStatsButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            // Set the background color of the clicked button to pink
+                            JButton clickedButton = (JButton) e.getSource();
+                            Component[] buttons = horsesStatsListPanel.getComponents();
+                            for (Component button : buttons) {
+                                button.setBackground(Color.WHITE);
+                            }
+                            clickedButton.setBackground(Color.PINK);
+
+
+                        }
+                    });
+                    horsesStatsListPanel.add(horseStatsButton);
+                }
+                scanner.close();
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
+        
+                horsesStatsListPanel.revalidate(); // Revalidate the panel to update the changes
+                horsesStatsListPanel.repaint(); // Repaint the panel to reflect the changes
+            }
+        });
+        addedHorsesStatsPanel.add(reloadHorseStatsButton, BorderLayout.SOUTH);
+
+
+        // Add the scroll pane to the created horses panel
+        addedHorsesStatsPanel.add(horsesStatsScrollPane, BorderLayout.CENTER);
+        statsPanel.add(addedHorsesStatsPanel, BorderLayout.WEST);
+
+        // Create a panel for the right section (previous races)
+        JPanel previousRacesPanel = new JPanel();
+        previousRacesPanel.setLayout(new BorderLayout());
+        previousRacesPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Create a label for the previous races
+        JLabel previousRacesLabel = new JLabel("Previous Races");
+        previousRacesLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        previousRacesLabel.setHorizontalAlignment(JLabel.CENTER);
+        previousRacesLabel.setBackground(Color.PINK);
+        previousRacesLabel.setOpaque(true);
+        previousRacesPanel.add(previousRacesLabel, BorderLayout.NORTH);
+
+        // Create a panel to hold the previous races
+        JPanel previousRacesListPanel = new JPanel();
+        previousRacesListPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        previousRacesListPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        previousRacesListPanel.setPreferredSize(new Dimension(700, 400));
+
+        // Read the previous races from the file
+        try {
+            File file = new File("previousRaces.txt");
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String trackName = scanner.nextLine();
+                String winner = scanner.nextLine();
+                Double time = Double.parseDouble(scanner.nextLine());
+                scanner.nextLine(); // Skip the blank line
+                JButton horseStatsButton = new JButton("<html><font size='6'>Track: " + trackName + "</font><br><font size='4'>Winner: " + winner + "</font><br><font size='4'>Time: " + time + "</font></html>");
+                    horseStatsButton.setFont(new Font("Arial", Font.PLAIN, 30));
+                    horseStatsButton.setBackground(Color.WHITE); // Set the background color to white
+                    horseStatsButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            // Set the background color of the clicked button to pink
+                            JButton clickedButton = (JButton) e.getSource();
+                            Component[] buttons = horsesStatsListPanel.getComponents();
+                            for (Component button : buttons) {
+                                button.setBackground(Color.WHITE);
+                            }
+                            clickedButton.setBackground(Color.PINK);
+
+
+                        }
+                        
+                    });
+                    previousRacesListPanel.add(horseStatsButton);
+            }
+            scanner.close();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        // Create a button to reload the races
+        JButton reloadRacesButton = new JButton("Reload Races");
+        reloadRacesButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        reloadRacesButton.setBackground(Color.PINK);
+        previousRacesPanel.add(reloadRacesButton, BorderLayout.SOUTH);
+        reloadRacesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                previousRacesListPanel.removeAll(); // Remove all existing track buttons
+                
+            // Read the previous races from the file
+            // Read the previous races from the file
+            try {
+                File file = new File("previousRaces.txt");
+                Scanner scanner = new Scanner(file);
+                while (scanner.hasNextLine()) {
+                    String trackName = scanner.nextLine();
+                    String winner = scanner.nextLine();
+                    Double time = Double.parseDouble(scanner.nextLine());
+                    scanner.nextLine(); // Skip the blank line
+                    JButton horseStatsButton = new JButton("<html><font size='6'>Track: " + trackName + "</font><br><font size='4'>Winner: " + winner + "</font><br><font size='4'>Time: " + time + "</font></html>");
+                        horseStatsButton.setFont(new Font("Arial", Font.PLAIN, 30));
+                        horseStatsButton.setBackground(Color.WHITE); // Set the background color to white
+                        horseStatsButton.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                // Set the background color of the clicked button to pink
+                                JButton clickedButton = (JButton) e.getSource();
+                                Component[] buttons = horsesStatsListPanel.getComponents();
+                                for (Component button : buttons) {
+                                    button.setBackground(Color.WHITE);
+                                }
+                                clickedButton.setBackground(Color.PINK);
+
+
+                            }
+                            
+                        });
+                        previousRacesListPanel.add(horseStatsButton);
+                }
+                scanner.close();
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
+            
+            previousRacesListPanel.revalidate(); // Revalidate the panel to update the changes
+            previousRacesListPanel.repaint(); // Repaint the panel to reflect the changes
+            }
+        });
+        previousRacesPanel.add(reloadRacesButton, BorderLayout.SOUTH);
+
+
+        // Create a scroll pane for the previous races list panel
+        JScrollPane previousRacesScrollPane = new JScrollPane(previousRacesListPanel);
+        previousRacesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        // Add the scroll pane to the previous races panel
+        previousRacesPanel.add(previousRacesScrollPane, BorderLayout.CENTER);
+
+        // Add the previous races panel to the right section of the stats panel
+        statsPanel.add(previousRacesPanel, BorderLayout.EAST);
+
+        // Create a button to redirect to the main page
+        JButton backStatsButton = new JButton("Back");
+        backStatsButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        backStatsButton.setBackground(Color.PINK);
+        backStatsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "home"); // Show the home panel when the back button is pressed
+            }
+        });
+        statsPanel.add(backStatsButton, BorderLayout.SOUTH);
+
+        contentPanel.add(statsPanel, "stats"); // Add the stats panel to the content panel with the name "stats"
+
+        
         tracksButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -826,6 +1083,13 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(contentPanel, "horses"); // Show the horses panel when the horses button is pressed
+            }
+        });
+
+        statsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "stats"); // Show the stats panel when the horses button is pressed
             }
         });
 
