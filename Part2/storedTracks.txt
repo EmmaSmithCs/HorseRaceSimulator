@@ -1,0 +1,25 @@
+Easy Peasy
+15
+Dirt
+3
+
+Spooksy
+35
+Mud
+5
+
+Long
+80
+Ice
+2
+
+Unreal
+1000
+Dirt
+3
+
+Stretch
+80
+Grass
+3
+

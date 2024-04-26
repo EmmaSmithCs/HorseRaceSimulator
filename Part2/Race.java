@@ -1,4 +1,6 @@
 import java.util.concurrent.TimeUnit;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.Math;
 
 /**
@@ -10,10 +12,16 @@ import java.lang.Math;
  */
 public class Race
 {
+    public static void main(String[] args) {
+        GUI gui = new GUI();
+    }
+
     private int raceLength;
     private Horse lane1Horse;
     private Horse lane2Horse;
     private Horse lane3Horse;
+    private Horse lane4Horse;
+    private Horse lane5Horse;
 
     /**
      * Constructor for objects of class Race
@@ -28,6 +36,9 @@ public class Race
         lane1Horse = null;
         lane2Horse = null;
         lane3Horse = null;
+        lane4Horse = null;
+        lane5Horse = null;
+        
     }
     
     /**
@@ -50,6 +61,14 @@ public class Race
         {
             lane3Horse = theHorse;
         }
+        else if (laneNumber == 4)
+        {
+            lane4Horse = theHorse;
+        }
+        else if (laneNumber == 5)
+        {
+            lane5Horse = theHorse;
+        }
         else
         {
             throw new IllegalArgumentException("Invalid lane number: " + laneNumber);
@@ -62,13 +81,12 @@ public class Race
      * then repeatedly moved forward until the 
      * race is finished
      */
-    public void startRace()
-    {
-        //Check if race is empty
-        if (lane1Horse == null || lane2Horse == null || lane3Horse == null)
-        {
-            throw new IllegalStateException("Cannot start race: Some lanes are empty.");
-        }
+    public Horse startRace() {
+        // Code to start the race
+        
+        
+    
+        
 
         //Checks whether the race length is valid (greater than 0)
         if (raceLength <= 0)
@@ -77,17 +95,25 @@ public class Race
         }
 
         //Checks that each horse's confidence is between 0 and 1 (exclusive) and that if it is 1 or bigger it sets it 0.99 and if it 0 or less it sets it 0.01
-        if (lane1Horse.getConfidence() >= 1 || lane1Horse.getConfidence() <= 0)
+        if (lane1Horse != null && (lane1Horse.getConfidence() >= 1 || lane1Horse.getConfidence() <= 0))
         {
             lane1Horse.setConfidence(lane1Horse.getConfidence() >= 1 ? 0.99 : 0.01);
         }
-        if (lane2Horse.getConfidence() >= 1 || lane2Horse.getConfidence() <= 0)
+        if (lane2Horse != null && (lane2Horse.getConfidence() >= 1 || lane2Horse.getConfidence() <= 0))
         {
             lane2Horse.setConfidence(lane2Horse.getConfidence() >= 1 ? 0.99 : 0.01);
         }
-        if (lane3Horse.getConfidence() >= 1 || lane3Horse.getConfidence() <= 0)
+        if (lane3Horse != null && (lane3Horse.getConfidence() >= 1 || lane3Horse.getConfidence() <= 0))
         {
             lane3Horse.setConfidence(lane3Horse.getConfidence() >= 1 ? 0.99 : 0.01);
+        }
+        if (lane4Horse != null && (lane4Horse.getConfidence() >= 1 || lane4Horse.getConfidence() <= 0))
+        {
+            lane4Horse.setConfidence(lane4Horse.getConfidence() >= 1 ? 0.99 : 0.01);
+        }
+        if (lane5Horse != null && (lane5Horse.getConfidence() >= 1 || lane5Horse.getConfidence() <= 0))
+        {
+            lane5Horse.setConfidence(lane5Horse.getConfidence() >= 1 ? 0.99 : 0.01);
         }
 
 
@@ -95,9 +121,21 @@ public class Race
         boolean finished = false;
         
         //reset all the lanes (all horses not fallen and back to 0). 
-        lane1Horse.goBackToStart();
-        lane2Horse.goBackToStart();
-        lane3Horse.goBackToStart();
+        if (lane1Horse != null) {
+            lane1Horse.goBackToStart();
+        }
+        if (lane2Horse != null) {
+            lane2Horse.goBackToStart();
+        }
+        if (lane3Horse != null) {
+            lane3Horse.goBackToStart();
+        }
+        if (lane4Horse != null) {
+            lane4Horse.goBackToStart();
+        }
+        if (lane5Horse != null) {
+            lane5Horse.goBackToStart();
+        }
 
         //Get the start time of the race
         long startTime = System.currentTimeMillis();
@@ -105,22 +143,57 @@ public class Race
         while (!finished)
         {
             //move each horse
-            moveHorse(lane1Horse);
-            moveHorse(lane2Horse);
-            moveHorse(lane3Horse);
+            if (lane1Horse != null) {
+                moveHorse(lane1Horse);
+            }
+            if (lane2Horse != null) {
+                moveHorse(lane2Horse);
+            }
+            if (lane3Horse != null) {
+                moveHorse(lane3Horse);
+            }
+            if (lane4Horse != null) {
+                moveHorse(lane4Horse);
+            }
+            if (lane5Horse != null) {
+                moveHorse(lane5Horse);
+            }
                         
             //print the race positions
             printRace();
             
             //if any of the three horses has won the race is finished
-            if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
+            if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) || raceWonBy(lane4Horse) || raceWonBy(lane5Horse))
             {
                 finished = true;
+                
             }
 
-            //End the race if all horses have fallen
-            if (lane1Horse.hasFallen() && lane2Horse.hasFallen() && lane3Horse.hasFallen())
-            {
+
+            boolean allFallen = true;
+            // Check if any of the active horses have fallen
+            for (int i = 1; i <= 5; i++) {
+                Horse currentHorse = null;
+                if (i == 1) {
+                    currentHorse = lane1Horse;
+                } else if (i == 2) {
+                    currentHorse = lane2Horse;
+                } else if (i == 3) {
+                    currentHorse = lane3Horse;
+                } else if (i == 4) {
+                    currentHorse = lane4Horse;
+                } else if (i == 5) {
+                    currentHorse = lane5Horse;
+                }
+                
+                if (currentHorse != null) {
+                    if (!currentHorse.hasFallen()) {
+                        allFallen = false;
+                    }
+                    
+                }
+            }
+            if (allFallen) {
                 System.out.println("All horses have fallen");
                 finished = true;
             }
@@ -130,6 +203,7 @@ public class Race
             {
                 System.out.println("Race has lasted too long, race haulted");
                 finished = true;
+                
             }
            
             //wait for 100 milliseconds
@@ -138,19 +212,40 @@ public class Race
             }catch(Exception e){}
         }
 
+        Horse winner = null;
         // Print the winenr
         if (raceWonBy(lane1Horse))
         {
             System.out.println("And the winner is " + lane1Horse.getName());
+            winner = lane1Horse;
+            
         }
         else if (raceWonBy(lane2Horse))
         {
             System.out.println("And the winner is " + lane2Horse.getName());
+            winner = lane2Horse;
         }
         else if (raceWonBy(lane3Horse))
         {
             System.out.println("And the winner is " + lane3Horse.getName());
+            winner = lane3Horse;
         }
+        else if (raceWonBy(lane4Horse))
+        {
+            System.out.println("And the winner is " + lane4Horse.getName());
+            winner = lane4Horse;
+        }
+        else if (raceWonBy(lane5Horse))
+        {
+            System.out.println("And the winner is " + lane5Horse.getName());
+            winner = lane5Horse;
+        }
+
+        
+        
+        
+
+        return winner;
     }
     
     /**
@@ -191,6 +286,10 @@ public class Race
      */
     private boolean raceWonBy(Horse theHorse)
     {
+        if (theHorse == null) {
+            return false;
+        }
+
         if (theHorse.getDistanceTravelled() == raceLength)
         {
             return true;
