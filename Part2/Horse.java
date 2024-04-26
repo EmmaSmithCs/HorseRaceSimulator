@@ -15,6 +15,11 @@ public class Horse
     private double horseConfidence;
     private String colour;
     private String mane;
+    private double averageSpeed;
+    private int racesRan;
+    private int racesWon;
+
+    
 
     
       
@@ -31,6 +36,10 @@ public class Horse
         this.fallen = false;
         this.colour = colour;
         this.mane = mane;
+        this.averageSpeed = 0;
+        this.racesRan = 0;
+        this.racesWon = 0;
+
 
     }
     

@@ -870,7 +870,7 @@ public class GUI {
                     return false;
                 }
                 // Skip other lines related to horse details
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 7; i++) {
                     scanner.nextLine();
                 }
             }
