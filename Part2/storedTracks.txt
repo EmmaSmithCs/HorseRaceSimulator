@@ -6,15 +6,20 @@ Dirt
 Spooksy
 35
 Mud
-8
+5
 
 Long
 80
 Ice
-12
+2
 
 Unreal
 1000
 Dirt
-100
+3
+
+Stretch
+80
+Grass
+3
 

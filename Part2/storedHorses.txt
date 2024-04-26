@@ -1,5 +1,5 @@
 H1
-0.5
+0.99
 0
 White
 White
@@ -8,7 +8,7 @@ White
 0
 
 H2
-0.5
+0.99
 0
 Light Brown
 Light Brown
@@ -17,7 +17,7 @@ Light Brown
 0
 
 H3
-0.5
+0.99
 0
 Dark Brown
 Dark Brown

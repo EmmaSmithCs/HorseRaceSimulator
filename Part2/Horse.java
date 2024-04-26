@@ -110,6 +110,16 @@ public class Horse
     {
         this.horseConfidence = newConfidence;
     }
+
+    public void setName(String newName)
+    {
+        this.horseName = newName;
+    }
+
+    public void setDistanceTravelled(int newDistanceTravelled)
+    {
+        this.distanceTravelled = newDistanceTravelled;
+    }
     
     public void setSymbol(char newSymbol)
     {

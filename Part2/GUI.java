@@ -48,17 +48,40 @@ public class GUI {
         homePanel.setLayout(new BorderLayout());
 
         // Add a new panel to hold the races
+        JPanel mainRacesPanel = new JPanel();
+        mainRacesPanel.setLayout(new BorderLayout());
+
         JPanel racesPanel = new JPanel();
-        racesPanel.setLayout(new GridLayout(3, 1));
+        racesPanel.setLayout(new GridLayout(2, 2));
+        // Add an image to the panel
+        ImageIcon imageIcon = new ImageIcon("images/wwHorse.png");
+        JLabel imageLabel = new JLabel(imageIcon);
+        racesPanel.add(imageLabel);
+        imageIcon = new ImageIcon("images/llHorse.png");
+        imageLabel = new JLabel(imageIcon);
+        racesPanel.add(imageLabel);
+        imageIcon = new ImageIcon("images/ddHorse.png");
+        imageLabel = new JLabel(imageIcon);
+        racesPanel.add(imageLabel);
+        imageIcon = new ImageIcon("images/bbHorse.png");
+        imageLabel = new JLabel(imageIcon);
+        racesPanel.add(imageLabel);
+        
         racesPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         racesPanel.setBorder(BorderFactory.createLineBorder(Color.PINK, 5));
         racesPanel.setPreferredSize(new Dimension(1000, 400)); // Set the panel size to 300x400
-        homePanel.add(racesPanel, BorderLayout.WEST);
+
+
+      
+
+        homePanel.add(mainRacesPanel, BorderLayout.WEST);
+
+       
+        mainRacesPanel.add(racesPanel, BorderLayout.CENTER);
 
         // Add buttons on the right 
         JButton tracksButton = new JButton("Tracks");
         JButton horsesButton = new JButton("Horses");
-        JButton betsButton = new JButton("Bets");
         JButton statsButton = new JButton("Stats");
         JLabel currentBet = new JLabel("Current Bet: None");
         currentBet.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -73,14 +96,152 @@ public class GUI {
         JButton startRace = new JButton("START RACE");
         tracksButton.setBackground(Color.PINK);
         horsesButton.setBackground(Color.PINK);
-        betsButton.setBackground(Color.PINK);
         startRace.setBackground(Color.PINK);
         statsButton.setBackground(Color.PINK);
         tracksButton.setFont(new Font("Arial", Font.PLAIN, 30));
         horsesButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        betsButton.setFont(new Font("Arial", Font.PLAIN, 30));
         startRace.setFont(new Font("Arial", Font.PLAIN, 30));
         statsButton.setFont(new Font("Arial", Font.PLAIN, 30));
+
+        startRace.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Open a pop-up window to display the race
+
+                JFrame alertFrame = new JFrame(); // Declare and initialize the frame variable
+                JOptionPane.showMessageDialog(alertFrame, "Race in progress...", "Race", JOptionPane.INFORMATION_MESSAGE);
+                boolean finished = false;
+                Race newRace = new Race(getCurrentTrack().getTrackLength());
+                for (int i = 0; i < getCurrentTrack().getLanes(); i++) {
+                    String horseName = activeHorses.get(i); // Placeholder for the horse name
+                    try {
+                        File storedHorsesFile = new File("storedHorses.txt");
+                        Scanner scanner = new Scanner(storedHorsesFile);
+                        while (scanner.hasNextLine()) {
+                            String line = scanner.nextLine();
+                            if (line.contains(horseName)) {
+                                String horseConfidence = scanner.nextLine();
+                                String horseDistance = scanner.nextLine();
+                                String horseColour = scanner.nextLine();
+                                String horseMane = scanner.nextLine();
+                                double horseAverageSpeed = Double.parseDouble(scanner.nextLine());
+                                double horseRacesRan = Double.parseDouble(scanner.nextLine());
+                                double horseRacesWon = Double.parseDouble(scanner.nextLine());
+                                scanner.nextLine(); // Skip the blank line
+
+                                Horse horse = new Horse('H', horseName, horseColour, horseMane);
+                                horse.setConfidence(Double.parseDouble(horseConfidence));
+                                horse.setDistanceTravelled(Integer.parseInt(horseDistance));
+                                horse.setAverageSpeed(horseAverageSpeed);
+                                horse.setRacesRan((int) horseRacesRan);
+                                horse.setRacesWon((int) horseRacesWon);
+                                newRace.addHorse(horse, i+1);
+                                break;
+                            }
+                        }
+                        scanner.close();
+                    } catch (FileNotFoundException er) {
+                        er.printStackTrace();
+                    }
+                }
+
+                Horse winner = newRace.startRace();
+                if (winner != null) {
+                    JFrame winnerFrame = new JFrame(); // Declare and initialize the frame variable
+                    JLabel winnerLabel = new JLabel();
+
+                    String winnerImagePath = ""; // Placeholder for the path of the winner image
+                    try {
+                        File storedHorsesFile = new File("storedHorses.txt");
+                        Scanner scanner = new Scanner(storedHorsesFile);
+                        while (scanner.hasNextLine()) {
+                            String line = scanner.nextLine();
+                            if (line.contains(winner.getName())) {
+                                String horseConfidence = scanner.nextLine();
+                                String horseDistance = scanner.nextLine();
+                                String horseColour = scanner.nextLine();
+                                String horseMane = scanner.nextLine();
+                                double horseAverageSpeed = Double.parseDouble(scanner.nextLine());
+                                double horseRacesRan = Double.parseDouble(scanner.nextLine());
+                                double horseRacesWon = Double.parseDouble(scanner.nextLine());
+                                scanner.nextLine(); // Skip the blank line
+
+                                if (horseColour.equals("White") && horseMane.equals("White")) {
+                                    winnerImagePath = "images/wwHorse.png";
+                                } else if (horseColour.equals("White") && horseMane.equals("Light Brown")) {
+                                    winnerImagePath = "images/wlHorse.png";
+                                } else if (horseColour.equals("White") && horseMane.equals("Dark Brown")) {
+                                    winnerImagePath = "images/wdHorse.png";
+                                } else if (horseColour.equals("White") && horseMane.equals("Black")) {
+                                    winnerImagePath = "images/wbHorse.png";
+                                } else if (horseColour.equals("Light Brown") && horseMane.equals("White")) {
+                                    winnerImagePath = "images/lwhHorse.png";
+                                } else if (horseColour.equals("Light Brown") && horseMane.equals("Light Brown")) {
+                                    winnerImagePath = "images/llHorse.png";
+                                } else if (horseColour.equals("Light Brown") && horseMane.equals("Dark Brown")) {
+                                    winnerImagePath = "images/ldHorse.png";
+                                } else if (horseColour.equals("Light Brown") && horseMane.equals("Black")) {
+                                    winnerImagePath = "images/lbHorse.png";
+                                } else if (horseColour.equals("Dark Brown") && horseMane.equals("White")) {
+                                    winnerImagePath = "images/dwHorse.png";
+                                } else if (horseColour.equals("Dark Brown") && horseMane.equals("Light Brown")) {
+                                    winnerImagePath = "images/dlHorse.png";
+                                } else if (horseColour.equals("Dark Brown") && horseMane.equals("Dark Brown")) {
+                                    winnerImagePath = "images/ddHorse.png";
+                                } else if (horseColour.equals("Dark Brown") && horseMane.equals("Black")) {
+                                    winnerImagePath = "images/dbHorse.png";
+                                } else if (horseColour.equals("Black") && horseMane.equals("White")) {
+                                    winnerImagePath = "images/bwHorse.png";
+                                } else if (horseColour.equals("Black") && horseMane.equals("Light Brown")) {
+                                    winnerImagePath = "images/blHorse.png";
+                                } else if (horseColour.equals("Black") && horseMane.equals("Dark Brown")) {
+                                    winnerImagePath = "images/bdHorse.png";
+                                } else if (horseColour.equals("Black") && horseMane.equals("Black")) {
+                                    winnerImagePath = "images/bbHorse.png";
+                                }
+                                
+                                
+                            }
+                        }
+                        scanner.close();
+                    } catch (FileNotFoundException er) {
+                        er.printStackTrace();
+                    }
+                    
+                    winnerLabel.setIcon(new ImageIcon(winnerImagePath));
+                    System.out.println("Winner: " + winner);
+                    System.out.println("Winner Image Path: " + winnerImagePath);
+                    
+                    JOptionPane.showMessageDialog(winnerFrame, winnerLabel, "The Winner was: " + winner.getName() + "\n", JOptionPane.INFORMATION_MESSAGE);
+                    try {
+                        FileWriter writer = new FileWriter("/c:/Users/Emma/Documents/OOP PROJECT/HorseRaceSimulator/Part2/previousRaces.txt", true);
+                        writer.write(currentTrack.getName() + "\n");
+                        writer.write(winner.getName() + "\n");
+                        writer.close();
+                    } catch (IOException er) {
+                        er.printStackTrace();
+                    }
+                        
+                    
+                } else {
+                    JFrame winnerFrame = new JFrame(); // Declare and initialize the frame variable
+                    JOptionPane.showMessageDialog(winnerFrame, "All horses fell", "Winner", JOptionPane.INFORMATION_MESSAGE);
+                    try {
+                        FileWriter writer = new FileWriter("/c:/Users/Emma/Documents/OOP PROJECT/HorseRaceSimulator/Part2/previousRaces.txt", true);
+                        writer.write(currentTrack.getName() + "\n");
+                        writer.write("No Winner\n");
+                        writer.close();
+                    } catch (IOException er) {
+                        er.printStackTrace();
+                    }
+                }
+
+                
+            }
+        });
+
+        
+        
 
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setPreferredSize(new Dimension(432, buttonsPanel.getHeight()));
@@ -88,7 +249,6 @@ public class GUI {
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add empty border around buttonsPanel
         buttonsPanel.add(tracksButton);
         buttonsPanel.add(horsesButton);
-        buttonsPanel.add(betsButton);
         buttonsPanel.add(statsButton);
         buttonsPanel.add(startRace);
         
@@ -130,7 +290,8 @@ public class GUI {
         String[] surfaceOptions = {"Dirt", "Grass", "Synthetic", "Mud", "Ice"};
         JComboBox<String> surfaceComboBox = new JComboBox<>(surfaceOptions);
         JLabel lanesLabel = new JLabel("Lanes:");
-        JTextField lanesField = new JTextField();
+        String[] lanesOptions = { "2", "3", "4", "5"};
+        JComboBox<String> lanesComboBox = new JComboBox<>(lanesOptions);
 
         // Change the font size of the labels
         nameLabel.setFont(new Font("Arial", Font.PLAIN, 50));
@@ -142,7 +303,7 @@ public class GUI {
         nameField.setFont(new Font("Arial", Font.PLAIN, 50));
         lengthField.setFont(new Font("Arial", Font.PLAIN, 50));
         surfaceComboBox.setFont(new Font("Arial", Font.PLAIN, 50));
-        lanesField.setFont(new Font("Arial", Font.PLAIN, 50));
+        lanesComboBox.setFont(new Font("Arial", Font.PLAIN, 50));
 
         // Add labels and fields to the track details panel
         trackDetailsPanel.add(nameLabel);
@@ -152,7 +313,7 @@ public class GUI {
         trackDetailsPanel.add(surfaceLabel);
         trackDetailsPanel.add(surfaceComboBox);
         trackDetailsPanel.add(lanesLabel);
-        trackDetailsPanel.add(lanesField);
+        trackDetailsPanel.add(lanesComboBox);
 
         // Create a button to add the track
         JButton addTrackButton = new JButton("Add Track");
@@ -171,7 +332,7 @@ public class GUI {
             nameField.setText("");
             lengthField.setText("");
             surfaceComboBox.setSelectedIndex(0);
-            lanesField.setText("");
+            lanesComboBox.setSelectedIndex(0);
             }
         });
 
@@ -191,7 +352,7 @@ public class GUI {
             String name = nameField.getText();
             int length = Integer.parseInt(lengthField.getText());
             String surface = (String) surfaceComboBox.getSelectedItem();
-            int lanes = Integer.parseInt(lanesField.getText());
+            int lanes = Integer.parseInt((String) lanesComboBox.getSelectedItem());
 
             Track newTrack = new Track(name, length, surface, lanes);
 
@@ -210,10 +371,10 @@ public class GUI {
             }
 
             if (trackExists == true) {
-                lanesField.setText("");
-                    nameField.setText("");
-                    lengthField.setText("");
-                    surfaceComboBox.setSelectedIndex(0);
+                lanesComboBox.setSelectedIndex(0);
+                nameField.setText("");
+                lengthField.setText("");
+                surfaceComboBox.setSelectedIndex(0);
                 JOptionPane.showMessageDialog(null, "Track name already exists. Please enter a different name.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 try (FileWriter writer = new FileWriter("storedTracks.txt", true)) {
@@ -222,7 +383,7 @@ public class GUI {
                     writer.write(newTrack.getSurface() + "\n");
                     writer.write(newTrack.getLanes() + "\n");
                     writer.write("\n");
-                    lanesField.setText("");
+                    lanesComboBox.setSelectedIndex(0);
                     nameField.setText("");
                     lengthField.setText("");
                     surfaceComboBox.setSelectedIndex(0);
@@ -401,7 +562,7 @@ public class GUI {
         JComboBox<String> colourComboBox = new JComboBox<>(colours);
         JLabel maneLabel = new JLabel("Mane:");
         String[] manes = {"White", "Light Brown", "Dark Brown", "Black"};
-        JComboBox<String> maneComboBox = new JComboBox<>(colours);
+        JComboBox<String> maneComboBox = new JComboBox<>(manes);
 
         // Change the font size of the labels
         nameHorseLabel.setFont(new Font("Arial", Font.PLAIN, 50));
@@ -748,7 +909,7 @@ public class GUI {
 
                                     
                                     // Validate the horse name
-                                    if (!horseName.isEmpty() && isHorseNameValid(horseName) && !activeHorses.contains(horseName)) {
+                                    if (!horseName.isEmpty() && !isHorseNameValid(horseName) && !activeHorses.contains(horseName)) {
                                         // Create a new Horse object with the horse name and add it to activeHorses
                                         activeHorses.add(horseName);
                                     }
@@ -812,12 +973,8 @@ public class GUI {
 
         contentPanel.add(horsesPanel, "horses"); // Add the horses panel to the content panel with the name "horses"
 
-        // Create the bets panel
-        JPanel betsPanel = new JPanel();
-        betsPanel.setLayout(new BorderLayout());
-        // Add components to the bets panel
 
-        contentPanel.add(betsPanel, "bets"); // Add the bets panel to the content panel with the name "bets"
+       
 
 
         // Create the stats panel
@@ -970,9 +1127,7 @@ public class GUI {
             while (scanner.hasNextLine()) {
                 String trackName = scanner.nextLine();
                 String winner = scanner.nextLine();
-                Double time = Double.parseDouble(scanner.nextLine());
-                scanner.nextLine(); // Skip the blank line
-                JButton horseStatsButton = new JButton("<html><font size='6'>Track: " + trackName + "</font><br><font size='4'>Winner: " + winner + "</font><br><font size='4'>Time: " + time + "</font></html>");
+                JButton horseStatsButton = new JButton("<html><font size='6'>Track: " + trackName + "</font><br><font size='4'>Winner: " + winner + "</font></html>");
                     horseStatsButton.setFont(new Font("Arial", Font.PLAIN, 30));
                     horseStatsButton.setBackground(Color.WHITE); // Set the background color to white
                     horseStatsButton.addActionListener(new ActionListener() {
@@ -1006,7 +1161,7 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 previousRacesListPanel.removeAll(); // Remove all existing track buttons
                 
-            // Read the previous races from the file
+            
             // Read the previous races from the file
             try {
                 File file = new File("previousRaces.txt");
@@ -1014,9 +1169,7 @@ public class GUI {
                 while (scanner.hasNextLine()) {
                     String trackName = scanner.nextLine();
                     String winner = scanner.nextLine();
-                    Double time = Double.parseDouble(scanner.nextLine());
-                    scanner.nextLine(); // Skip the blank line
-                    JButton horseStatsButton = new JButton("<html><font size='6'>Track: " + trackName + "</font><br><font size='4'>Winner: " + winner + "</font><br><font size='4'>Time: " + time + "</font></html>");
+                    JButton horseStatsButton = new JButton("<html><font size='6'>Track: " + trackName + "</font><br><font size='4'>Winner: " + winner + "</font></html>");
                         horseStatsButton.setFont(new Font("Arial", Font.PLAIN, 30));
                         horseStatsButton.setBackground(Color.WHITE); // Set the background color to white
                         horseStatsButton.addActionListener(new ActionListener() {
@@ -1028,8 +1181,8 @@ public class GUI {
                                     button.setBackground(Color.WHITE);
                                 }
                                 clickedButton.setBackground(Color.PINK);
-
-
+    
+    
                             }
                             
                         });
@@ -1093,12 +1246,7 @@ public class GUI {
             }
         });
 
-        betsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(contentPanel, "bets"); // Show the bets panel when the bets button is pressed
-            }
-        });
+        
 
         frame.setVisible(true); // Set the frame visible after adding all the components
 
@@ -1110,9 +1258,9 @@ public class GUI {
 
 
     private ArrayList<String> activeHorses = new ArrayList<>();
-    private Track currentTrack; // Declare the currentTrack variable
+    private static Track currentTrack; // Declare the currentTrack variable as static
 
-    public Track getCurrentTrack() {
+    public static Track getCurrentTrack() {
         return currentTrack;
     }
     
@@ -1123,7 +1271,7 @@ public class GUI {
     public boolean isHorseNameValid(String horseName) {
         try {
             // Read the storedHorse.txt file
-            File file = new File("storedHorse.txt");
+            File file = new File("storedHorses.txt");
             Scanner scanner = new Scanner(file);
 
             // Check if the horse name exists in the file
@@ -1133,10 +1281,7 @@ public class GUI {
                     scanner.close();
                     return false;
                 }
-                // Skip other lines related to horse details
-                for (int i = 0; i < 7; i++) {
-                    scanner.nextLine();
-                }
+                
             }
 
             scanner.close();
