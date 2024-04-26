@@ -1,5 +1,8 @@
 public class Main {
     public static void main(String[] args) {
+        // Create a new GUI
+        GUI gui = new GUI();
+        
         // Create a race with a distance of 10
         Race myRace = new Race(10);
 

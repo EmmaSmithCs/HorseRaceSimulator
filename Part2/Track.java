@@ -3,12 +3,14 @@ public class Track {
     private String name;
     private int trackLength;
     private String surface;
+    private int lanes;
 
     // Constructor
-    public Track(String name, int trackLength, String surface) {
+    public Track(String name, int trackLength, String surface, int lanes) {
         this.name = name;
         this.trackLength = trackLength;
         this.surface = surface;
+        this.lanes = lanes;
     }
 
     // Accessor methods
@@ -24,6 +26,10 @@ public class Track {
         return surface;
     }
 
+    public int getLanes() {
+        return lanes;
+    }
+
     // Mutator methods
 
     public void setName(String name) {
@@ -36,6 +42,10 @@ public class Track {
 
     public void setSurface(String surface) {
         this.surface = surface;
+    }
+
+    public void setLanes(int lanes) {
+        this.lanes = lanes;
     }
 
 }

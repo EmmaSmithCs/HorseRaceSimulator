@@ -14,6 +14,7 @@ public class Race
     private Horse lane1Horse;
     private Horse lane2Horse;
     private Horse lane3Horse;
+    private Track currentTrack;
 
     /**
      * Constructor for objects of class Race
@@ -28,6 +29,7 @@ public class Race
         lane1Horse = null;
         lane2Horse = null;
         lane3Horse = null;
+        currentTrack = null;
     }
     
     /**
@@ -55,6 +57,10 @@ public class Race
             throw new IllegalArgumentException("Invalid lane number: " + laneNumber);
         }
     }
+
+    public void addTrack(Track trackObject) {
+        currentTrack = trackObject;
+    }
     
     /**
      * Start the race
@@ -64,6 +70,8 @@ public class Race
      */
     public void startRace()
     {
+        
+
         //Check if race is empty
         if (lane1Horse == null || lane2Horse == null || lane3Horse == null)
         {
