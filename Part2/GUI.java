@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -368,10 +369,441 @@ public class GUI {
 
         contentPanel.add(tracksPanel, "tracks"); // Add the tracks panel to the content panel with the name "tracks"
 
+
+
+
+
+
         // Create the horses panel
         JPanel horsesPanel = new JPanel();
         horsesPanel.setLayout(new BorderLayout());
-        // Add components to the horses panel
+        
+        // Create a panel for creating horses on the left
+        JPanel createHorsePanel = new JPanel();
+        createHorsePanel.setLayout(new BorderLayout());
+        createHorsePanel.setPreferredSize(new Dimension(500, 400));
+        createHorsePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        createHorsePanel.setBorder(BorderFactory.createLineBorder(Color.PINK, 5));
+
+        // Create components for creating horses
+        JLabel createHorseLabel = new JLabel("Create Horse");
+        createHorseLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        createHorseLabel.setHorizontalAlignment(JLabel.CENTER);
+        createHorseLabel.setBackground(Color.PINK);
+        createHorseLabel.setOpaque(true);
+        createHorsePanel.add(createHorseLabel, BorderLayout.NORTH);
+
+        // Create a panel for the horse details
+        JPanel horseDetailsPanel = new JPanel();
+        horseDetailsPanel.setLayout(new GridLayout(4, 2, 10, 10));
+        horseDetailsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Create labels and fields for horse details
+        JLabel nameHorseLabel = new JLabel("Name:");
+        JTextField nameHorseField = new JTextField();
+        JLabel colourLabel = new JLabel("Colour:");
+        String[] colours = {"White", "Light Brown", "Dark Brown", "Black"};
+        JComboBox<String> colourComboBox = new JComboBox<>(colours);
+        JLabel maneLabel = new JLabel("Mane:");
+        String[] manes = {"White", "Light Brown", "Dark Brown", "Black"};
+        JComboBox<String> maneComboBox = new JComboBox<>(colours);
+
+        // Change the font size of the labels
+        nameHorseLabel.setFont(new Font("Arial", Font.PLAIN, 50));
+        colourLabel.setFont(new Font("Arial", Font.PLAIN, 50));
+        maneLabel.setFont(new Font("Arial", Font.PLAIN, 50));
+
+        // Change the font of the inputs
+        nameHorseField.setFont(new Font("Arial", Font.PLAIN, 50));
+        colourComboBox.setFont(new Font("Arial", Font.PLAIN, 30));
+        maneComboBox.setFont(new Font("Arial", Font.PLAIN, 30));
+
+        // Add labels and fields to the horse details panel
+        horseDetailsPanel.add(nameHorseLabel);
+        horseDetailsPanel.add(nameHorseField);
+        horseDetailsPanel.add(colourLabel);
+        horseDetailsPanel.add(colourComboBox);
+        horseDetailsPanel.add(maneLabel);
+        horseDetailsPanel.add(maneComboBox);
+
+        // Create a button to add the horse
+        JButton addHorseButton = new JButton("Add");
+        addHorseButton.setPreferredSize(new Dimension(250, horseDetailsPanel.getHeight()));
+        addHorseButton.setBackground(Color.PINK);
+        addHorseButton.setFont(new Font("Arial", Font.PLAIN, 50));
+        addHorseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = nameHorseField.getText();
+                String colour = (String) colourComboBox.getSelectedItem();
+                String mane = (String) maneComboBox.getSelectedItem();
+
+                Horse newHorse = new Horse('H', name, colour, mane);
+
+                // Check if the track name already exists
+                boolean horseExists = false;
+                try (BufferedReader reader = new BufferedReader(new FileReader("storedHorses.txt"))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (line.equals(newHorse.getName())) {
+                            horseExists = true;
+                            break;
+                        }
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+                if (horseExists == true) {
+                        nameHorseField.setText("");
+                        colourComboBox.setSelectedIndex(0);
+                        maneComboBox.setSelectedIndex(0);
+                    JOptionPane.showMessageDialog(null, "Horse name already exists. Please enter a different name.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try (FileWriter writer = new FileWriter("storedHorses.txt", true)) {
+                        writer.write(newHorse.getName() + "\n");
+                        writer.write(newHorse.getConfidence() + "\n");
+                        writer.write(newHorse.getDistanceTravelled() + "\n");
+                        writer.write(newHorse.getColour() + "\n");
+                        writer.write(newHorse.getMane() + "\n");
+                        writer.write("\n");
+                        
+                        nameHorseField.setText("");
+                        colourComboBox.setSelectedIndex(0);
+                        maneComboBox.setSelectedIndex(0);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            
+           
+
+            }
+        });
+
+        // Add clear button for horse adding
+        JButton clearHorseButton = new JButton("Clear");
+        clearHorseButton.setPreferredSize(new Dimension(250, horseDetailsPanel.getHeight()));
+        clearHorseButton.setBackground(Color.PINK);
+        clearHorseButton.setFont(new Font("Arial", Font.PLAIN, 50));
+        clearHorseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nameHorseField.setText("");
+                colourComboBox.setSelectedIndex(0);
+                maneComboBox.setSelectedIndex(0);
+            }
+        });
+
+        horseDetailsPanel.add(clearHorseButton);
+        horseDetailsPanel.add(addHorseButton);
+
+        // Add the horse details panel to the create horse panel
+        createHorsePanel.add(horseDetailsPanel, BorderLayout.CENTER);
+
+        // Add the create horse panel to the horses panel
+        horsesPanel.add(createHorsePanel, BorderLayout.WEST);
+
+        // Add the horses panel to the content panel
+        contentPanel.add(horsesPanel, "horses");
+
+        // Create a panel to display created horses
+        JPanel createdHorsesPanel = new JPanel();
+        createdHorsesPanel.setLayout(new BorderLayout());
+
+        // Create a label for the created horses
+        JLabel createdHorsesLabel = new JLabel("Created Horses");
+        createdHorsesLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        createdHorsesLabel.setHorizontalAlignment(JLabel.CENTER);
+        createdHorsesLabel.setBackground(Color.PINK);
+        createdHorsesLabel.setOpaque(true);
+        createdHorsesPanel.add(createdHorsesLabel, BorderLayout.NORTH);
+
+        // Create a panel to hold the created horses
+        JPanel horsesListPanel = new JPanel();
+        horsesListPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        horsesListPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Create a scroll pane for the horses list panel
+        JScrollPane horsesScrollPane = new JScrollPane(horsesListPanel);
+        horsesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        // Read the created horses from the file
+        try {
+            File file = new File("storedHorses.txt");
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String horseName = scanner.nextLine();
+                String horseConfidence = scanner.nextLine();
+                String horseDistance = scanner.nextLine();
+                String horseColour = scanner.nextLine();
+                String horseMane = scanner.nextLine();
+                scanner.nextLine(); // Skip the blank line
+
+                JButton horseButton = new JButton("<html><font size='6'>" + horseName + "</font><br><font size='4'>Confidence: " + horseConfidence + "</font><br><font size='4'>Distance: " + horseDistance + "</font><br><font size='4'>Colour: " + horseColour + "</font><br><font size='4'>Mane: " + horseMane + "</font></html>");
+                horseButton.setFont(new Font("Arial", Font.PLAIN, 30));
+                horseButton.setBackground(Color.WHITE); // Set the background color to white
+                horseButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        // Set the background color of the clicked button to pink
+                        JButton clickedButton = (JButton) e.getSource();
+                        Component[] buttons = horsesListPanel.getComponents();
+                        for (Component button : buttons) {
+                            button.setBackground(Color.WHITE);
+                        }
+                        clickedButton.setBackground(Color.PINK);
+
+
+                    }
+                });
+                horsesListPanel.add(horseButton);
+            }
+            scanner.close();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+
+        // Create a button to reload the created horses
+        JButton relaodHorseButton = new JButton("Reload Horses");
+        relaodHorseButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        relaodHorseButton.setBackground(Color.PINK);
+        relaodHorseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                horsesListPanel.removeAll(); // Remove all existing track buttons
+                try {
+                    File file = new File("storedHorses.txt");
+                    Scanner scanner = new Scanner(file);
+                    while (scanner.hasNextLine()) {
+                        String horseName = scanner.nextLine();
+                        String horseConfidence = scanner.nextLine();
+                        String horseDistance = scanner.nextLine();
+                        String horseColour = scanner.nextLine();
+                        String horseMane = scanner.nextLine();
+                        scanner.nextLine(); // Skip the blank line
+        
+                        JButton horseButton = new JButton("<html><font size='6'>" + horseName + "</font><br><font size='4'>Confidence: " + horseConfidence + "</font><br><font size='4'>Distance: " + horseDistance + "</font><br><font size='4'>Colour: " + horseColour + "</font><br><font size='4'>Mane: " + horseMane + "</font></html>");
+                        horseButton.setFont(new Font("Arial", Font.PLAIN, 30));
+                        horseButton.setBackground(Color.WHITE); // Set the background color to white
+                        horseButton.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                // Set the background color of the clicked button to pink
+                                JButton clickedButton = (JButton) e.getSource();
+                                Component[] buttons = horsesListPanel.getComponents();
+                                for (Component button : buttons) {
+                                    button.setBackground(Color.WHITE);
+                                }
+                                clickedButton.setBackground(Color.PINK);
+        
+        
+                            }
+                        });
+                        horsesListPanel.add(horseButton);
+                    }
+                    scanner.close();
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+        
+                horsesListPanel.revalidate(); // Revalidate the panel to update the changes
+                horsesListPanel.repaint(); // Repaint the panel to reflect the changes
+            }
+        });
+        createdHorsesPanel.add(relaodHorseButton, BorderLayout.SOUTH);
+
+
+        // Add the scroll pane to the created horses panel
+        createdHorsesPanel.add(horsesScrollPane, BorderLayout.CENTER);
+        horsesPanel.add(createdHorsesPanel, BorderLayout.CENTER);
+
+        // Create a panel to add a horse to each lane
+        JPanel addHorseToLanePanel = new JPanel();
+        addHorseToLanePanel.setLayout(new BorderLayout());
+        addHorseToLanePanel.setPreferredSize(new Dimension(500, 400));
+        addHorseToLanePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        addHorseToLanePanel.setBorder(BorderFactory.createLineBorder(Color.PINK, 5));
+
+        // Create components for adding a horse to each lane
+        JLabel addHorseToLaneLabel = new JLabel("Add Horse to Lane");
+        addHorseToLaneLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        addHorseToLaneLabel.setHorizontalAlignment(JLabel.CENTER);
+        addHorseToLaneLabel.setBackground(Color.PINK);
+        addHorseToLaneLabel.setOpaque(true);
+        addHorseToLanePanel.add(addHorseToLaneLabel, BorderLayout.NORTH);
+
+        // Create a panel for the lane details
+        JPanel laneDetailsPanel = new JPanel();
+        laneDetailsPanel.setLayout(new GridLayout(3, 1, 10, 10));
+        laneDetailsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Add a label below to show the current track
+        // Add a label to show the current track
+        JLabel currentTrackLabel = new JLabel("Current Track: " + (currentTrack != null ? currentTrack.getName() : "None"));
+        currentTrackLabel.setFont(new Font("Arial", Font.PLAIN, 30));
+        currentTrackLabel.setHorizontalAlignment(JLabel.CENTER);
+        laneDetailsPanel.add(currentTrackLabel);
+
+        if (currentTrack != null) {
+            // Create a panel to hold all the lanes
+            JPanel allLanesPanel = new JPanel();
+            allLanesPanel.setLayout(new GridLayout(currentTrack.getLanes(), 1, 10, 10));
+            allLanesPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            // Loop through each lane in the current track
+            for (int i = 0; i < currentTrack.getLanes(); i++) {
+                // Create a panel for each lane
+                JPanel lanePanel = new JPanel();
+                lanePanel.setLayout(new GridLayout(2, 1, 10, 10));
+                lanePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+                // Create a label for the lane number
+                JLabel laneLabel = new JLabel("Lane " + (i + 1));
+                laneLabel.setFont(new Font("Arial", Font.PLAIN, 30));
+                lanePanel.add(laneLabel);
+
+                // Create a text field for entering the horse name
+                JTextField horseNameField = new JTextField();
+                horseNameField.setFont(new Font("Arial", Font.PLAIN, 30));
+                lanePanel.add(horseNameField);
+
+                // Add the lane panel to the all lanes panel
+                allLanesPanel.add(lanePanel);
+            }
+
+            // Create a scroll pane for the all lanes panel
+            JScrollPane lanesScrollPane = new JScrollPane(allLanesPanel);
+            lanesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+            // Add the lanes scroll pane to the lane details panel
+            laneDetailsPanel.add(lanesScrollPane);
+        }
+
+        
+
+        // Create a button to reload the lanes
+        JButton reloadLanes = new JButton("Reload Lanes");
+        reloadLanes.setFont(new Font("Arial", Font.PLAIN, 20));
+        reloadLanes.setBackground(Color.PINK);
+        reloadLanes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                laneDetailsPanel.removeAll(); // Remove all existing track buttons
+                    JLabel currentTrackLabel = new JLabel("Current Track: " + (currentTrack != null ? currentTrack.getName() : "None"));
+                    currentTrackLabel.setFont(new Font("Arial", Font.PLAIN, 30));
+                    currentTrackLabel.setHorizontalAlignment(JLabel.CENTER);
+                    laneDetailsPanel.add(currentTrackLabel);
+
+                    if (currentTrack != null) {
+                        // Create a panel to hold all the lanes
+                        JPanel allLanesPanel = new JPanel();
+                        allLanesPanel.setLayout(new GridLayout(currentTrack.getLanes(), 1, 10, 10));
+                        allLanesPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            
+                        // Loop through each lane in the current track
+                        for (int i = 0; i < currentTrack.getLanes(); i++) {
+                            // Create a panel for each lane
+                            JPanel lanePanel = new JPanel();
+                            lanePanel.setLayout(new GridLayout(2, 1, 10, 10));
+                            lanePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            
+                            // Create a label for the lane number
+                            JLabel laneLabel = new JLabel("Lane " + (i + 1));
+                            laneLabel.setFont(new Font("Arial", Font.PLAIN, 30));
+                            lanePanel.add(laneLabel);
+            
+                            // Create a text field for entering the horse name
+                            JTextField horseNameField = new JTextField();
+                            horseNameField.setFont(new Font("Arial", Font.PLAIN, 30));
+                            lanePanel.add(horseNameField);
+            
+                            // Add the lane panel to the all lanes panel
+                            allLanesPanel.add(lanePanel);
+                        }
+            
+                        // Create a scroll pane for the all lanes panel
+                        JScrollPane lanesScrollPane = new JScrollPane(allLanesPanel);
+                        lanesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            
+                        // Create a button to add all the lane horses to activeHorses
+                        JButton addAllHorsesButton = new JButton("Add All Horses");
+                        addAllHorsesButton.setFont(new Font("Arial", Font.PLAIN, 20));
+                        addAllHorsesButton.setBackground(Color.PINK);
+                        addAllHorsesButton.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                activeHorses.clear(); // Clear the activeHorses list
+                                boolean invalidNames = false;
+                                // Loop through each lane in the current track
+                                for (int i = 0; i < currentTrack.getLanes(); i++) {
+                                    // Get the horse name from the corresponding text field
+                                    JPanel lanePanel = (JPanel) allLanesPanel.getComponent(i);
+                                    JTextField horseNameField = (JTextField) lanePanel.getComponent(1);
+                                    String horseName = horseNameField.getText();
+
+                                    
+                                    // Validate the horse name
+                                    if (!horseName.isEmpty() && isHorseNameValid(horseName) && !activeHorses.contains(horseName)) {
+                                        // Create a new Horse object with the horse name and add it to activeHorses
+                                        activeHorses.add(horseName);
+                                    }
+                                    else {
+                                        invalidNames = true;
+                                    }
+                                }
+                                if (invalidNames) {
+                                    JOptionPane.showMessageDialog(null, "Invalid horse names. Please enter valid horse names.", "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                                else {
+                                    JOptionPane.showMessageDialog(null, "All horses added successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                
+                            }
+                            
+                        });
+                        
+                        // Add the lanes scroll pane to the lane details panel
+                        laneDetailsPanel.add(lanesScrollPane);
+                        laneDetailsPanel.add(addAllHorsesButton);
+                    }
+                
+                    laneDetailsPanel.revalidate(); // Revalidate the panel to update the changes
+                    laneDetailsPanel.repaint(); // Repaint the panel to reflect the changes
+            }
+        });
+        addHorseToLanePanel.add(reloadLanes, BorderLayout.SOUTH);
+
+
+        // Add the lane details panel to the add horse to lane panel
+        addHorseToLanePanel.add(laneDetailsPanel, BorderLayout.CENTER);
+
+        // Add the add horse to lane panel to the horses panel
+        horsesPanel.add(addHorseToLanePanel, BorderLayout.EAST);
+
+
+
+
+
+
+
+
+
+
+
+        // Create a button to redirect to the main page
+        JButton backHorseButton = new JButton("Back");
+        backHorseButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        backHorseButton.setBackground(Color.PINK);
+        backHorseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            cardLayout.show(contentPanel, "home"); // Show the home panel when the back button is pressed
+            }
+        });
+        horsesPanel.add(backHorseButton, BorderLayout.SOUTH);
+
+
+
 
         contentPanel.add(horsesPanel, "horses"); // Add the horses panel to the content panel with the name "horses"
 
@@ -413,7 +845,7 @@ public class GUI {
 
 
 
-    
+    private ArrayList<String> activeHorses = new ArrayList<>();
     private Track currentTrack; // Declare the currentTrack variable
 
     public Track getCurrentTrack() {
@@ -424,7 +856,32 @@ public class GUI {
         currentTrack = track;
     }
 
-    
+    public boolean isHorseNameValid(String horseName) {
+        try {
+            // Read the storedHorse.txt file
+            File file = new File("storedHorse.txt");
+            Scanner scanner = new Scanner(file);
+
+            // Check if the horse name exists in the file
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.equals(horseName)) {
+                    scanner.close();
+                    return false;
+                }
+                // Skip other lines related to horse details
+                for (int i = 0; i < 4; i++) {
+                    scanner.nextLine();
+                }
+            }
+
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
 }
 
    

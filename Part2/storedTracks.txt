@@ -1,20 +1,20 @@
-First Track
-20
+Easy Peasy
+15
 Dirt
 3
 
-Muddy Roads
-30
+Spooksy
+35
 Mud
-5
+8
 
-Slip N Slide
-40
+Long
+80
 Ice
-4
+12
 
-hi
-50
+Unreal
+1000
 Dirt
-6
+100
 

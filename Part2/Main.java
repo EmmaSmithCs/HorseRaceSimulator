@@ -7,9 +7,9 @@ public class Main {
         Race myRace = new Race(10);
 
         // Create three horses
-        Horse horse1 = new Horse('A', "Apollo", 0.2);
-        Horse horse2 = new Horse('B', "Bucephalus", 0.5);
-        Horse horse3 = new Horse('C', "Comet", 0.8);
+        Horse horse1 = new Horse('A', "Apollo", "TEST", "TEST");
+        Horse horse2 = new Horse('B', "Bucephalus", "TEST", "TEST");
+        Horse horse3 = new Horse('C', "Comet", "TEST", "TEST");
 
         // Add the horses 
         myRace.addHorse(horse1, 1);

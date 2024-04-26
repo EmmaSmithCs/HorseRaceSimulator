@@ -13,19 +13,25 @@ public class Horse
     private int distanceTravelled;
     private boolean fallen;
     private double horseConfidence;
+    private String colour;
+    private String mane;
+
     
       
     //Constructor of class Horse
     /**
      * Constructor for objects of class Horse
      */
-    public Horse(char horseSymbol, String horseName, double horseConfidence)
+    public Horse(char horseSymbol, String horseName, String colour, String mane)
     {
         this.horseSymbol = horseSymbol;
         this.horseName = horseName;
-        this.horseConfidence = horseConfidence;
+        this.horseConfidence = 0.5;
         this.distanceTravelled = 0; 
         this.fallen = false;
+        this.colour = colour;
+        this.mane = mane;
+
     }
     
     
@@ -55,6 +61,14 @@ public class Horse
     {
         return horseSymbol; 
     }
+
+    public String getColour() {
+        return colour;
+    }
+
+    public String getMane() {
+        return mane;
+    }
     
     public void goBackToStart()
     {
@@ -81,4 +95,13 @@ public class Horse
         this.horseSymbol = newSymbol;
     }
     
+    public void setColour(String newColour)
+    {
+        this.colour = newColour;
+    }
+    
+    public void setMane(String newMane)
+    {
+        this.mane = newMane;
+    }
 }
